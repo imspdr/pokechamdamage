@@ -11,7 +11,8 @@
     "@emotion/styled": "^11.11.0",
     "@imspdr/ui": "^1.0.6",
     "@tanstack/react-query": "^5.90.16",
-    "axios": "^1.13.2",
+    "axios": "^1.16.1",
+    "cheerio": "^1.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.11.0"
@@ -25,6 +26,7 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "babel-loader": "^10.0.0",
+    "beautifulsoup4": "^0.0.1-security",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^13.0.1",
     "dotenv-webpack": "^8.1.1",
