@@ -5,7 +5,7 @@ import StatRow from './components/StatRow';
 import { StatName, calculateStat } from '../../util';
 import pokemonData from '../../data/pokemon.json';
 import { TypeBadge } from '../TypeBadge';
-import { PanelWrapper, PokemonInfoBox, HeaderRow } from './styled';
+import { PanelWrapper, HeaderRow } from './styled';
 
 interface Props {
   title: string;

@@ -3,24 +3,26 @@ import styled from '@emotion/styled';
 export const RowContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   width: 100%;
   margin-bottom: 4px;
 `;
 
 export const LabelBox = styled.div`
-  width: 40px;
+  width: 44px;
   flex-shrink: 0;
+  white-space: nowrap;
+  font-size: 13px;
 `;
 
 export const BaseStatBox = styled.div`
-  width: 30px;
+  width: 26px;
   text-align: right;
   flex-shrink: 0;
 `;
 
 export const ActualStatBox = styled.div`
-  width: 36px;
+  width: 30px;
   text-align: right;
   flex-shrink: 0;
 `;
@@ -31,10 +33,10 @@ export const EvInputBox = styled.div`
   justify-content: center;
   gap: 2px;
   flex: 1;
-  min-width: 80px;
+  min-width: 60px;
 
   input[type="number"] {
-    width: 36px;
+    width: 30px;
     padding: 2px;
     border-radius: 4px;
     border: 1px solid var(--imspdr-background-3);
@@ -64,7 +66,7 @@ export const MinMaxBtn = styled.button`
 export const NatureBox = styled.div`
   display: flex;
   gap: 2px;
-  width: 70px;
+  width: 60px;
   justify-content: center;
   flex-shrink: 0;
 `;
@@ -91,7 +93,7 @@ export const NatureBtn = styled.button<{ active: boolean; modifierType: 'up' | '
 export const RankBox = styled.div`
   display: flex;
   align-items: center;
-  width: 40px;
+  width: 32px;
   flex-shrink: 0;
   
   input[type="number"] {

@@ -18,6 +18,8 @@ export const InputSection = styled.div`
   flex-wrap: wrap;
   gap: 16px;
   align-items: flex-end;
+  width: 100%;
+  box-sizing: border-box;
   
   input[type="number"] {
     width: 80px;
@@ -42,6 +44,7 @@ export const ModifierRow = styled.div`
   flex-wrap: wrap;
   gap: 12px;
   width: 100%;
+  box-sizing: border-box;
 `;
 
 export const ModifierColumn = styled.div`
@@ -54,6 +57,7 @@ export const ModifierColumn = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  box-sizing: border-box;
 `;
 
 export const TagContainer = styled.div`
@@ -112,6 +116,8 @@ export const ResultBox = styled.div`
   gap: 8px;
   align-items: center;
   margin-top: 8px;
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 export const RollList = styled.div`

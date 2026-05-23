@@ -9,6 +9,7 @@ export const PageContainer = styled.div`
   max-width: 760px;
   margin: 0 auto;
   padding: 8px;
+  box-sizing: border-box;
   
   @media (max-width: 767px) {
     padding: 4px;
@@ -21,6 +22,7 @@ export const PanelsRow = styled.div`
   align-items: stretch;
   gap: 8px;
   width: 100%;
+  box-sizing: border-box;
 
   @media (max-width: 767px) {
     flex-direction: column;
