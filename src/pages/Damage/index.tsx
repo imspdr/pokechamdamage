@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
-import { Button, useModal } from '@imspdr/ui';
-import { PageContainer, PanelsRow, PanelContainer, CenterAction } from './styled';
+import { useModal } from '@imspdr/ui';
+import { PageContainer, PanelsRow, PanelContainer, CenterAction, LoadPartyButton, SwapButton } from './styled';
 import PokemonConfigPanel from '@/components/PokemonConfigPanel';
 import DamageCalculatorPanel from './components/DamageCalculatorPanel';
 import { PartyLoadContent, PartyLoadFooter, selectedPartyIdAtom, selectedSlotIndexAtom } from './components/PartyLoadContent';
@@ -45,9 +45,9 @@ const DamagePage: FC = () => {
   return (
     <PageContainer>
       {parties.length > 0 && (
-        <Button variant="solid" onClick={handleLoadFromPartyClick} style={{ width: '100%', marginBottom: '8px' }}>
+        <LoadPartyButton variant="solid" onClick={handleLoadFromPartyClick}>
           내 파티에서 포켓몬 불러오기
-        </Button>
+        </LoadPartyButton>
       )}
       
       <PanelsRow>
@@ -60,13 +60,12 @@ const DamagePage: FC = () => {
         </PanelContainer>
 
         <CenterAction>
-          <Button 
+          <SwapButton 
             variant="outline" 
             onClick={handleSwap}
-            style={{ borderRadius: '50%', width: '40px', height: '40px', padding: 0 }}
           >
             ⇄
-          </Button>
+          </SwapButton>
         </CenterAction>
 
         <PanelContainer>

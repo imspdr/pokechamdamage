@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { Button } from '@imspdr/ui';
 
 export const PageContainer = styled.div`
   display: flex;
@@ -54,4 +55,16 @@ export const CenterAction = styled.div`
     padding: 8px 0;
     transform: rotate(90deg);
   }
+`;
+
+export const LoadPartyButton = styled(Button)`
+  width: 100%;
+  margin-bottom: 8px;
+`;
+
+export const SwapButton = styled(Button)`
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  padding: 0;
 `;

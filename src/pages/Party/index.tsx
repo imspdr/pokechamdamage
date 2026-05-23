@@ -5,9 +5,7 @@ import PokemonConfigPanel from '@/components/PokemonConfigPanel';
 import { Party } from '@/types/party';
 import { PokemonConfig } from '@/types/pokemon';
 import pokemonData from '@/data/pokemon.json';
-import { PageContainer, PartyCard, SlotsRow, SlotItem, ConfigWrapper } from './styled';
-import { StatName } from '@/util';
-import { getTypeInfo } from '@/typeMap';
+import { PageContainer, PartyCard, SlotsRow, SlotItem, ConfigWrapper, ListHeader, EmptyMessage, EditHeader, PartyNameInput } from './styled';
 import PokemonSlotCard from '@/components/PokemonSlotCard';
 
 const PartyPage: FC = () => {
@@ -47,26 +45,15 @@ const PartyPage: FC = () => {
   if (!editingPartyId || !activeParty) {
     return (
       <PageContainer>
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <ListHeader>
           <Typography variant="title" level={6} bold>내 파티 목록</Typography>
           <Button variant="solid" onClick={handleCreate}>새 파티 만들기</Button>
-        </div>
+        </ListHeader>
 
         {parties.length === 0 ? (
-          <Typography 
-            variant="body" 
-            level={1} 
-            color="foreground.3" 
-            style={{ 
-              marginTop: '40px', 
-              textAlign: 'center', 
-              wordBreak: 'keep-all', 
-              whiteSpace: 'normal',
-              width: '100%' 
-            }}
-          >
+          <EmptyMessage variant="body" level={1} color="foreground.3">
             저장된 파티가 없습니다.<br />새 파티를 만들어보세요!
-          </Typography>
+          </EmptyMessage>
         ) : (
           parties.map(party => (
             <PartyCard key={party.id} onClick={() => { setEditingPartyId(party.id); setActiveSlotIndex(0); }}>
@@ -88,24 +75,13 @@ const PartyPage: FC = () => {
 
   return (
     <PageContainer>
-      <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <EditHeader>
         <Button variant="outline" onClick={() => setEditingPartyId(null)}>목록으로</Button>
-        <input
+        <PartyNameInput
           value={activeParty.name}
           onChange={(e) => updateParty(activeParty.id, { ...activeParty, name: e.target.value })}
-          style={{
-            flex: 1,
-            background: 'transparent',
-            border: 'none',
-            borderBottom: '1px solid var(--imspdr-background-3)',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            color: 'var(--imspdr-foreground-1)',
-            padding: '4px',
-            minWidth: 0
-          }}
         />
-      </div>
+      </EditHeader>
 
       <SlotsRow>
         {activeParty.members.map((member, idx) => (

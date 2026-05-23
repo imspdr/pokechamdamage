@@ -5,6 +5,21 @@ import { useParties } from '@/hooks/useParties';
 import { PokemonConfig } from '@/types/pokemon';
 import pokemonData from '@/data/pokemon.json';
 import PokemonSlotCard from '@/components/PokemonSlotCard';
+import {
+  ListContainer,
+  PartyListButton,
+  PartyName,
+  PartyMemberCount,
+  GridContainer,
+  SlotsGrid,
+  SlotWrapper,
+  CenterContainer,
+  RoleSelectText,
+  FooterContainer,
+  AttackerButton,
+  DefenderButton,
+  FooterFullButton
+} from './styled';
 
 export const selectedPartyIdAtom = atom<string | null>(null);
 export const selectedSlotIndexAtom = atom<number | null>(null);
@@ -26,16 +41,16 @@ export const PartyLoadContent: FC<Props> = ({ onSelect }) => {
 
   if (!selectedPartyId) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <ListContainer>
         {parties.map(p => (
-          <Button key={p.id} variant="outline" onClick={() => setSelectedPartyId(p.id)} style={{ justifyContent: 'space-between', padding: '12px' }}>
-            <span style={{ fontWeight: 'bold' }}>{p.name}</span>
-            <span style={{ fontSize: '12px', color: 'var(--imspdr-foreground-3)' }}>
+          <PartyListButton key={p.id} variant="outline" onClick={() => setSelectedPartyId(p.id)}>
+            <PartyName>{p.name}</PartyName>
+            <PartyMemberCount>
               포켓몬 {p.members.filter(m => m.id).length} / 6
-            </span>
-          </Button>
+            </PartyMemberCount>
+          </PartyListButton>
         ))}
-      </div>
+      </ListContainer>
     );
   }
 
@@ -44,41 +59,33 @@ export const PartyLoadContent: FC<Props> = ({ onSelect }) => {
 
   if (selectedSlotIndex === null) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
+      <GridContainer>
+        <SlotsGrid>
           {party.members.map((m, idx) => (
-            <div 
+            <SlotWrapper 
               key={idx}
               onClick={() => m.id && setSelectedSlotIndex(idx)}
-              style={{
-                aspectRatio: '1',
-                border: '1px solid var(--imspdr-background-3)',
-                borderRadius: '8px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: m.id ? 'pointer' : 'default',
-                opacity: m.id ? 1 : 0.3,
-                backgroundColor: 'var(--imspdr-background-2)'
-              }}
+              disabled={!m.id}
             >
               <PokemonSlotCard member={m} />
-            </div>
+            </SlotWrapper>
           ))}
-        </div>
-      </div>
+        </SlotsGrid>
+      </GridContainer>
     );
   }
 
   const member = party.members[selectedSlotIndex];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
+    <CenterContainer>
       <Typography variant="title" level={3} bold>{getPokemonName(member.id)}</Typography>
-      <Typography variant="body" level={2} color="foreground.2" style={{ textAlign: 'center' }}>
-        이 포켓몬을 데미지 계산기의<br />어느 쪽에 불러올까요?
+      <Typography variant="body" level={2} color="foreground.2">
+        <RoleSelectText>
+          이 포켓몬을 데미지 계산기의<br />어느 쪽에 불러올까요?
+        </RoleSelectText>
       </Typography>
-    </div>
+    </CenterContainer>
   );
 };
 
@@ -93,32 +100,32 @@ export const PartyLoadFooter: FC<{ onCancel: () => void, onSelect: (config: Poke
 
     if (member) {
       return (
-        <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+        <FooterContainer>
           <Button variant="outline" onClick={() => setSelectedSlotIndex(null)} style={{ flex: 1 }}>
             이전
           </Button>
-          <Button variant="solid" style={{ flex: 1, backgroundColor: 'var(--imspdr-danger-1)' }} onClick={() => onSelect(member, 'attacker')}>
+          <AttackerButton variant="solid" onClick={() => onSelect(member, 'attacker')}>
             공격 측으로
-          </Button>
-          <Button variant="solid" style={{ flex: 1, backgroundColor: 'var(--imspdr-info-1)' }} onClick={() => onSelect(member, 'defender')}>
+          </AttackerButton>
+          <DefenderButton variant="solid" onClick={() => onSelect(member, 'defender')}>
             방어 측으로
-          </Button>
-        </div>
+          </DefenderButton>
+        </FooterContainer>
       );
     }
   }
 
   if (selectedPartyId !== null) {
     return (
-      <Button variant="ghost" onClick={() => setSelectedPartyId(null)} style={{ width: '100%', color: 'var(--imspdr-foreground-2)' }}>
+      <FooterFullButton variant="ghost" onClick={() => setSelectedPartyId(null)}>
         이전 (파티 목록)
-      </Button>
+      </FooterFullButton>
     );
   }
 
   return (
-    <Button variant="ghost" onClick={onCancel} style={{ width: '100%', color: 'var(--imspdr-foreground-2)' }}>
+    <FooterFullButton variant="ghost" onClick={onCancel}>
       취소
-    </Button>
+    </FooterFullButton>
   );
 };

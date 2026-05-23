@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { Typography } from '@imspdr/ui';
 
 export const PageContainer = styled.div`
   display: flex;
@@ -80,5 +81,44 @@ export const ConfigWrapper = styled.div`
   @media (max-width: 767px) {
     padding: 8px;
     width: 100%;
+  }
+`;
+
+export const ListHeader = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const EmptyMessage = styled(Typography)`
+  margin-top: 40px;
+  text-align: center;
+  word-break: keep-all;
+  white-space: normal;
+  width: 100%;
+`;
+
+export const EditHeader = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const PartyNameInput = styled.input`
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--imspdr-background-3);
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--imspdr-foreground-1);
+  padding: 4px;
+  min-width: 0;
+  
+  &:focus {
+    outline: none;
+    border-bottom-color: var(--imspdr-primary-1);
   }
 `;
