@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Typography } from '@imspdr/ui';
-import { TabContainer, TabItemWrapper } from './styled';
+import { TabContainer, TabItemWrapper, DesktopText } from './styled';
 
 const HeaderTabs: FC = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const HeaderTabs: FC = () => {
           color={isDamage ? 'primary.1' : 'foreground.3'} 
           bold={isDamage}
         >
-          데미지계산
+          데미지<DesktopText>계산</DesktopText>
         </Typography>
       </TabItemWrapper>
       <TabItemWrapper 
@@ -35,7 +35,7 @@ const HeaderTabs: FC = () => {
           color={isParty ? 'primary.1' : 'foreground.3'} 
           bold={isParty}
         >
-          파티 구성
+          파티<DesktopText> 구성</DesktopText>
         </Typography>
       </TabItemWrapper>
     </TabContainer>

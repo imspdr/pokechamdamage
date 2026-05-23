@@ -17,3 +17,9 @@ export const TabItemWrapper = styled.div<{ active: boolean }>`
     background-color: var(--imspdr-background-2);
   }
 `;
+
+export const DesktopText = styled.span`
+  @media (max-width: 767px) {
+    display: none;
+  }
+`;
