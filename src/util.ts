@@ -27,37 +27,34 @@ export interface Move {
   power: number;
 }
 
-// 개체값이 없는(0으로 간주) 포켓몬 챔피언스 기준 능력치 계산 공식
+// 포켓몬 챔피언스 전용 간소화된 50레벨 실수치 공식 (노력치는 0~32 실수치 단위)
 export function calculateStat(
   statName: StatName,
   base: number,
   ev: number,
-  level: number,
-  nature: PokemonInstance['nature']
+  natureModifier: number = 1.0
 ): number {
   if (statName === 'hp') {
-    // HP = floor(((2 * Base + floor(EV / 4)) * Level) / 100) + Level + 10
-    return Math.floor(((2 * base + Math.floor(ev / 4)) * level) / 100) + level + 10;
+    return base + 75 + ev;
   } else {
-    // 다른 능력치 = floor(floor(((2 * Base + floor(EV / 4)) * Level) / 100) + 5) * 성격보정
-    let stat = Math.floor(((2 * base + Math.floor(ev / 4)) * level) / 100) + 5;
-    
-    let natureMultiplier = 1.0;
-    if (nature.increased === statName) natureMultiplier = 1.1;
-    if (nature.decreased === statName) natureMultiplier = 0.9;
-    
-    return Math.floor(stat * natureMultiplier);
+    return Math.floor((base + 20 + ev) * natureModifier);
   }
 }
 
 export function getCalculatedStats(pokemon: PokemonInstance): PokemonStats {
+  const getNatureMod = (stat: StatName) => {
+    if (pokemon.nature.increased === stat) return 1.1;
+    if (pokemon.nature.decreased === stat) return 0.9;
+    return 1.0;
+  };
+
   return {
-    hp: calculateStat('hp', pokemon.baseStats.hp, pokemon.evs.hp, pokemon.level, pokemon.nature),
-    attack: calculateStat('attack', pokemon.baseStats.attack, pokemon.evs.attack, pokemon.level, pokemon.nature),
-    defense: calculateStat('defense', pokemon.baseStats.defense, pokemon.evs.defense, pokemon.level, pokemon.nature),
-    spAttack: calculateStat('spAttack', pokemon.baseStats.spAttack, pokemon.evs.spAttack, pokemon.level, pokemon.nature),
-    spDefense: calculateStat('spDefense', pokemon.baseStats.spDefense, pokemon.evs.spDefense, pokemon.level, pokemon.nature),
-    speed: calculateStat('speed', pokemon.baseStats.speed, pokemon.evs.speed, pokemon.level, pokemon.nature),
+    hp: calculateStat('hp', pokemon.baseStats.hp, pokemon.evs.hp, 1.0),
+    attack: calculateStat('attack', pokemon.baseStats.attack, pokemon.evs.attack, getNatureMod('attack')),
+    defense: calculateStat('defense', pokemon.baseStats.defense, pokemon.evs.defense, getNatureMod('defense')),
+    spAttack: calculateStat('spAttack', pokemon.baseStats.spAttack, pokemon.evs.spAttack, getNatureMod('spAttack')),
+    spDefense: calculateStat('spDefense', pokemon.baseStats.spDefense, pokemon.evs.spDefense, getNatureMod('spDefense')),
+    speed: calculateStat('speed', pokemon.baseStats.speed, pokemon.evs.speed, getNatureMod('speed')),
   };
 }
 
