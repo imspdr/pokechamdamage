@@ -8,7 +8,9 @@ import {
   Typography,
 } from '@imspdr/ui';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import HomePage from './pages/Home';
+import DamagePage from './pages/Damage';
+import PartyPage from './pages/Party';
+import HeaderTabs from './components/HeaderTabs';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,12 +45,14 @@ const AppLayout: FC = () => {
 
   return (
     <Layout
-      title="Template Project"
+      title="데미지계산기"
       onHomeClick={() => navigate('/')}
+      middleContent={<HeaderTabs />}
     >
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/damage" element={<DamagePage />} />
+        <Route path="/party" element={<PartyPage />} />
+        <Route path="*" element={<Navigate to="/damage" replace />} />
       </Routes>
     </Layout>
   );
