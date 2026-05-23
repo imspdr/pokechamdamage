@@ -43,9 +43,13 @@ export function calculateStat(
 
 export function getCalculatedStats(pokemon: PokemonInstance): PokemonStats {
   const getNatureMod = (stat: StatName) => {
-    if (pokemon.nature.increased === stat) return 1.1;
-    if (pokemon.nature.decreased === stat) return 0.9;
-    return 1.0;
+    // Handle both old format (increased/decreased) and new format (Record)
+    if ('increased' in pokemon.nature || 'decreased' in pokemon.nature) {
+      if ((pokemon.nature as any).increased === stat) return 1.1;
+      if ((pokemon.nature as any).decreased === stat) return 0.9;
+      return 1.0;
+    }
+    return (pokemon.nature as any)[stat] || 1.0;
   };
 
   return {
@@ -95,46 +99,62 @@ export function getTypeMultiplier(attackType: string, defendTypes: string[]): nu
   return multiplier;
 }
 
-// 포켓몬 챔피언스 데미지 계산 (난수 0.85 ~ 1.0 적용 결과를 최소, 최대 데미지로 반환)
-export function calculateDamage(
-  attacker: PokemonInstance,
-  defender: PokemonInstance,
-  move: Move
-): { min: number; max: number; typeEffectiveness: number } {
-  if (move.category === 'Status' || move.power === 0) {
-    return { min: 0, max: 0, typeEffectiveness: 1 };
+export function calculateDetailedDamage(
+  attacker: { stats: PokemonStats; ranks: Record<StatName, number>; types: string[] },
+  defender: { stats: PokemonStats; ranks: Record<StatName, number>; types: string[] },
+  move: { power: number; type: string; category: 'Physical' | 'Special' },
+  extraMultipliers: number[],
+  defMultipliers: number[],
+  atkMultipliers: number[]
+) {
+  if (move.power === 0) return { rolls: Array(16).fill(0), percentages: Array(16).fill(0), typeEffectiveness: 1 };
+
+  const getRankMultiplier = (rank: number) => {
+    if (rank > 0) return (2 + rank) / 2;
+    if (rank < 0) return 2 / (2 - rank);
+    return 1;
+  };
+
+  let A = move.category === 'Physical' ? attacker.stats.attack : attacker.stats.spAttack;
+  let D = move.category === 'Physical' ? defender.stats.defense : defender.stats.spDefense;
+
+  A = Math.floor(A * getRankMultiplier(move.category === 'Physical' ? attacker.ranks.attack : attacker.ranks.spAttack));
+  D = Math.floor(D * getRankMultiplier(move.category === 'Physical' ? defender.ranks.defense : defender.ranks.spDefense));
+
+  for (const mod of atkMultipliers) {
+    A = Math.floor(A * mod);
   }
 
-  const attackerStats = getCalculatedStats(attacker);
-  const defenderStats = getCalculatedStats(defender);
+  for (const mod of defMultipliers) {
+    D = Math.floor(D * mod);
+  }
 
-  // 물리 / 특수 판정에 따른 공격력, 방어력 선택
-  const A = move.category === 'Physical' ? attackerStats.attack : attackerStats.spAttack;
-  const D = move.category === 'Physical' ? defenderStats.defense : defenderStats.spDefense;
+  // Level 50 is fixed
+  const levelPart = Math.floor((2 * 50) / 5) + 2; // 22
 
-  // 레벨 계산부
-  const levelPart = Math.floor((2 * attacker.level) / 5) + 2;
-  
-  // 기본 데미지
   const baseDamage = Math.floor(Math.floor((levelPart * move.power * A) / D) / 50) + 2;
 
-  // 자속 보정 (STAB)
-  const stab = attacker.types.includes(move.type.toLowerCase()) ? 1.5 : 1;
-
-  // 타입 상성 보정
+  const stab = attacker.types.includes(move.type) ? 1.5 : 1.0;
   const typeEffectiveness = getTypeMultiplier(move.type, defender.types);
 
-  // 최종 배율 (여기서는 기본 보정만 포함. 날씨, 도구, 크리티컬 등은 추가 가능)
-  const modifiersNoRandom = stab * typeEffectiveness;
+  let extraMod = 1;
+  for (const mod of extraMultipliers) {
+    extraMod *= mod;
+  }
 
-  // 데미지 계산식에 따라 0.85 ~ 1.0 난수 적용
-  // 소수점 처리는 각 단계별로 버림(floor)하는 것이 일반적인 룰
-  const minDamage = Math.floor(baseDamage * 0.85 * modifiersNoRandom);
-  const maxDamage = Math.floor(baseDamage * 1.0 * modifiersNoRandom);
+  const rolls: number[] = [];
+  const percentages: number[] = [];
+  const hp = defender.stats.hp;
+
+  for (let r = 85; r <= 100; r++) {
+    const damage = Math.floor(baseDamage * (r / 100) * stab * typeEffectiveness * extraMod);
+    rolls.push(damage);
+    percentages.push((damage / hp) * 100);
+  }
 
   return {
-    min: minDamage,
-    max: maxDamage,
+    rolls,
+    percentages,
     typeEffectiveness
   };
 }

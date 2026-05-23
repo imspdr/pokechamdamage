@@ -1,7 +1,8 @@
 import { FC, useState } from 'react';
 import { Button } from '@imspdr/ui';
-import { PageContainer, PanelContainer, CenterAction } from './styled';
+import { PageContainer, PanelsRow, PanelContainer, CenterAction } from './styled';
 import PokemonConfigPanel from '../../components/PokemonConfigPanel';
+import DamageCalculatorPanel from './components/DamageCalculatorPanel';
 import { PokemonConfig, createDefaultConfig } from '../../types/pokemon';
 
 const DamagePage: FC = () => {
@@ -16,27 +17,38 @@ const DamagePage: FC = () => {
 
   return (
     <PageContainer>
-      <PanelContainer>
-        <PokemonConfigPanel 
-          title="공격 포켓몬" 
-          config={attackerConfig} 
-          onChange={setAttackerConfig} 
-        />
-      </PanelContainer>
+      <PanelsRow>
+        <PanelContainer>
+          <PokemonConfigPanel 
+            title="공격 포켓몬" 
+            config={attackerConfig} 
+            onChange={setAttackerConfig} 
+          />
+        </PanelContainer>
 
-      <CenterAction>
-        <Button variant="ghost" onClick={handleSwap}>
-          ⇄
-        </Button>
-      </CenterAction>
+        <CenterAction>
+          <Button 
+            variant="outline" 
+            onClick={handleSwap}
+            style={{ borderRadius: '50%', width: '40px', height: '40px', padding: 0 }}
+          >
+            ⇄
+          </Button>
+        </CenterAction>
 
-      <PanelContainer>
-        <PokemonConfigPanel 
-          title="방어 포켓몬" 
-          config={defenderConfig} 
-          onChange={setDefenderConfig} 
-        />
-      </PanelContainer>
+        <PanelContainer>
+          <PokemonConfigPanel 
+            title="방어 포켓몬" 
+            config={defenderConfig} 
+            onChange={setDefenderConfig} 
+          />
+        </PanelContainer>
+      </PanelsRow>
+
+      <DamageCalculatorPanel 
+        attackerConfig={attackerConfig}
+        defenderConfig={defenderConfig}
+      />
     </PageContainer>
   );
 };
