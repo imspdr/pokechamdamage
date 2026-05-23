@@ -1,9 +1,9 @@
 import { FC } from 'react';
 import { AutoComplete, Typography } from '@imspdr/ui';
-import { PokemonConfig } from '../../types/pokemon';
+import { PokemonConfig } from '@/types/pokemon';
 import StatRow from './components/StatRow';
-import { StatName, calculateStat } from '../../util';
-import pokemonData from '../../data/pokemon.json';
+import { StatName, calculateStat } from '@/util';
+import pokemonData from '@/data/pokemon.json';
 import { TypeBadge } from '../TypeBadge';
 import { PanelWrapper, HeaderRow } from './styled';
 
@@ -85,6 +85,8 @@ const PokemonConfigPanel: FC<Props> = ({ title, config, onChange }) => {
       </div>
 
       <AutoComplete
+        key={config.id || 'empty'}
+        initialValue={selectedPokemon?.koreanName || ''}
         options={pokemonOptions}
         onSelect={(opt) => handleIdChange(opt.value)}
         noResultText="포켓몬을 찾을 수 없습니다."

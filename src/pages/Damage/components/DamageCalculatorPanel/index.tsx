@@ -1,9 +1,9 @@
 import { FC, useState, useMemo } from 'react';
 import { Typography } from '@imspdr/ui';
-import { PokemonConfig } from '../../../../types/pokemon';
-import { calculateDetailedDamage, getCalculatedStats } from '../../../../util';
-import pokemonData from '../../../../data/pokemon.json';
-import { getTypeInfo } from '../../../../typeMap';
+import { PokemonConfig } from '@/types/pokemon';
+import { calculateDetailedDamage, getCalculatedStats } from '@/util';
+import pokemonData from '@/data/pokemon.json';
+import { getTypeInfo } from '@/typeMap';
 import {
   CalculatorContainer,
   InputSection,

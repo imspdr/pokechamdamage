@@ -1,42 +1,14 @@
 import { FC, useState } from 'react';
 import { Button, Typography } from '@imspdr/ui';
-import { useParties } from '../../hooks/useParties';
-import PokemonConfigPanel from '../../components/PokemonConfigPanel';
-import { Party } from '../../types/party';
-import { PokemonConfig } from '../../types/pokemon';
-import pokemonData from '../../data/pokemon.json';
+import { useParties } from '@/hooks/useParties';
+import PokemonConfigPanel from '@/components/PokemonConfigPanel';
+import { Party } from '@/types/party';
+import { PokemonConfig } from '@/types/pokemon';
+import pokemonData from '@/data/pokemon.json';
 import { PageContainer, PartyCard, SlotsRow, SlotItem, ConfigWrapper } from './styled';
-import { StatName } from '../../util';
-import { getTypeInfo } from '../../typeMap';
-
-const STAT_SHORT_MAP: Record<StatName, string> = {
-  hp: 'H', attack: 'A', defense: 'B', spAttack: 'C', spDefense: 'D', speed: 'S'
-};
-
-const getEvSummary = (evs: Record<StatName, number>) => {
-  const parts: string[] = [];
-  Object.entries(evs).forEach(([key, val]) => {
-    if (val > 0) parts.push(`${STAT_SHORT_MAP[key as StatName]}${val}`);
-  });
-  return parts.length > 0 ? parts.join(' ') : '무보정';
-};
-
-const getNatureSummary = (nature: Record<StatName, number>) => {
-  let up = '';
-  let down = '';
-  Object.entries(nature).forEach(([key, val]) => {
-    if (val === 1.1) up = STAT_SHORT_MAP[key as StatName];
-    if (val === 0.9) down = STAT_SHORT_MAP[key as StatName];
-  });
-  if (!up && !down) return '성격 무보정';
-  return `+${up} -${down}`;
-};
-
-const getTypes = (id: string | null): string[] => {
-  if (!id) return [];
-  const p = (pokemonData as any[]).find(poke => poke.id === id);
-  return p ? p.types : [];
-};
+import { StatName } from '@/util';
+import { getTypeInfo } from '@/typeMap';
+import PokemonSlotCard from '@/components/PokemonSlotCard';
 
 const PartyPage: FC = () => {
   const { parties, createParty, updateParty, deleteParty } = useParties();
@@ -117,7 +89,7 @@ const PartyPage: FC = () => {
   return (
     <PageContainer>
       <div style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <Button variant="outline" onClick={() => setEditingPartyId(null)} style={{ padding: '4px 8px' }}>←</Button>
+        <Button variant="outline" onClick={() => setEditingPartyId(null)}>목록으로</Button>
         <input
           value={activeParty.name}
           onChange={(e) => updateParty(activeParty.id, { ...activeParty, name: e.target.value })}
@@ -136,52 +108,16 @@ const PartyPage: FC = () => {
       </div>
 
       <SlotsRow>
-        {activeParty.members.map((member, idx) => {
-          const types = getTypes(member.id);
-          return (
-            <SlotItem
-              key={idx}
-              active={activeSlotIndex === idx}
-              empty={!member.id}
-              onClick={() => setActiveSlotIndex(idx)}
-            >
-              {!member.id ? (
-                <>
-                  <div style={{ fontSize: '24px', opacity: 0.2 }}>+</div>
-                  <Typography variant="caption" level={1} color="foreground.3" style={{ marginTop: '4px', fontSize: '10px' }}>
-                    비어있음
-                  </Typography>
-                </>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', padding: '4px', boxSizing: 'border-box', justifyContent: 'center' }}>
-                  <Typography variant="body" level={3} bold style={{ textAlign: 'center', marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {getPokemonName(member.id)}
-                  </Typography>
-                  
-                  <div style={{ display: 'flex', gap: '2px', justifyContent: 'center', marginBottom: '4px' }}>
-                    {types.map(t => {
-                      const tInfo = getTypeInfo(t);
-                      return (
-                        <div key={t} style={{ fontSize: '9px', padding: '1px 4px', borderRadius: '4px', backgroundColor: tInfo.color, color: tInfo.textColor, whiteSpace: 'nowrap' }}>
-                          {tInfo.ko}
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-                    <Typography variant="caption" level={1} style={{ fontSize: '10px', textAlign: 'center', color: 'var(--imspdr-primary-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>
-                      {getEvSummary(member.evs)}
-                    </Typography>
-                    <Typography variant="caption" level={1} style={{ fontSize: '10px', textAlign: 'center', color: 'var(--imspdr-danger-1)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>
-                      {getNatureSummary(member.nature)}
-                    </Typography>
-                  </div>
-                </div>
-              )}
-            </SlotItem>
-          );
-        })}
+        {activeParty.members.map((member, idx) => (
+          <SlotItem
+            key={idx}
+            active={activeSlotIndex === idx}
+            empty={!member.id}
+            onClick={() => setActiveSlotIndex(idx)}
+          >
+            <PokemonSlotCard member={member} />
+          </SlotItem>
+        ))}
       </SlotsRow>
 
       <ConfigWrapper>

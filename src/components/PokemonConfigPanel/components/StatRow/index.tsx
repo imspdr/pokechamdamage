@@ -1,6 +1,6 @@
 import { FC, useState, useEffect } from 'react';
 import { Typography } from '@imspdr/ui';
-import { StatName } from '../../../../util';
+import { StatName } from '@/util';
 import {
   RowContainer,
   LabelBox,

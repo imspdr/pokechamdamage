@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import styled from '@emotion/styled';
-import { getTypeInfo } from '../../typeMap';
+import { getTypeInfo } from '@/typeMap';
 
 const BadgeContainer = styled.div<{ bg: string; textColor: string }>`
   display: inline-flex;

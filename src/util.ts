@@ -1,4 +1,40 @@
 export type StatName = 'hp' | 'attack' | 'defense' | 'spAttack' | 'spDefense' | 'speed';
+import pokemonData from './data/pokemon.json';
+
+export const STAT_SHORT_MAP: Record<StatName, string> = {
+  hp: 'H', attack: 'A', defense: 'B', spAttack: 'C', spDefense: 'D', speed: 'S'
+};
+
+export const getEvSummary = (evs: Record<StatName, number>) => {
+  const parts: string[] = [];
+  Object.entries(evs).forEach(([key, val]) => {
+    if (val > 0) parts.push(`${STAT_SHORT_MAP[key as StatName]}${val}`);
+  });
+  return parts.length > 0 ? parts.join(' ') : '무보정';
+};
+
+export const getNatureSummary = (nature: Record<StatName, number>) => {
+  let up = '';
+  let down = '';
+  Object.entries(nature).forEach(([key, val]) => {
+    if (val === 1.1) up = STAT_SHORT_MAP[key as StatName];
+    if (val === 0.9) down = STAT_SHORT_MAP[key as StatName];
+  });
+  if (!up && !down) return '성격 무보정';
+  return `+${up} -${down}`;
+};
+
+export const getPokemonTypes = (id: string | null): string[] => {
+  if (!id) return [];
+  const p = (pokemonData as any[]).find(poke => poke.id === id);
+  return p ? p.types : [];
+};
+
+export const getPokemonName = (id: string | null) => {
+  if (!id) return '선택 안됨';
+  const p = (pokemonData as any[]).find(poke => poke.id === id);
+  return p ? p.koreanName : '알 수 없음';
+};
 
 export interface PokemonStats {
   hp: number;
