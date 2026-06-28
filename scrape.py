@@ -103,7 +103,6 @@ def get_form_string(name, f):
         if f == "a": return "Paldea-Aqua-Breed"
     if name == "Meowstic":
         if f == "f": return "Female"
-        if f == "m": return "" 
     if name == "Lycanroc":
         if f == "m": return "Midnight"
         if f == "d": return "Dusk"
@@ -274,11 +273,30 @@ def main():
         }
         processed_data.append(new_entry)
         
-    print(f"Processed {len(processed_data)} entries.")
+    
+    # Deduplicate forms with identical stats and types
+    deduped = []
+    seen = set()
+    for p in processed_data:
+        sig = (
+            p['pokedexNumber'],
+            tuple(sorted(p['types'])),
+            p['baseStats']['hp'],
+            p['baseStats']['attack'],
+            p['baseStats']['defense'],
+            p['baseStats']['spAttack'],
+            p['baseStats']['spDefense'],
+            p['baseStats']['speed']
+        )
+        if sig not in seen:
+            seen.add(sig)
+            deduped.append(p)
+            
+    print(f"Processed {len(deduped)} unique entries (removed {len(processed_data) - len(deduped)} duplicates).")
     
     os.makedirs("src/data", exist_ok=True)
     with open("src/data/pokemon.json", "w", encoding="utf-8") as f:
-        json.dump(processed_data, f, indent=2, ensure_ascii=False)
+        json.dump(deduped, f, indent=2, ensure_ascii=False)
     print("Saved to src/data/pokemon.json")
 
 if __name__ == "__main__":

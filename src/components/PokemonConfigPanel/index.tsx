@@ -1,5 +1,6 @@
 import { FC } from 'react';
-import { AutoComplete, Typography } from '@imspdr/ui';
+import { Typography } from '@imspdr/ui';
+import { PokemonAutoComplete, PokemonOption } from '../PokemonAutoComplete';
 import { PokemonConfig } from '@/types/pokemon';
 import StatRow from './components/StatRow';
 import { StatName, calculateStat } from '@/util';
@@ -13,10 +14,24 @@ interface Props {
   onChange: (newConfig: PokemonConfig) => void;
 }
 
-const pokemonOptions = pokemonData.map((p) => ({
-  label: p.koreanName,
-  value: p.id,
-}));
+const pokemonOptions: PokemonOption[] = pokemonData.map((p) => {
+  const aliases: string[] = [];
+  
+  if (p.form && p._baseKoreanName) {
+    const formName = p.koreanName.replace(p._baseKoreanName, '').replace(/^-/, '');
+    if (formName) {
+      aliases.push(`${formName}${p._baseKoreanName}`); // e.g. 메가이상해꽃
+      aliases.push(`${formName} ${p._baseKoreanName}`); // e.g. 메가 이상해꽃
+    }
+    aliases.push(p._baseKoreanName); // e.g. 이상해꽃
+  }
+
+  return {
+    label: p.koreanName,
+    value: p.id,
+    aliases,
+  };
+});
 
 const STAT_LABELS: Record<StatName, string> = {
   hp: 'HP',
@@ -84,7 +99,7 @@ const PokemonConfigPanel: FC<Props> = ({ title, config, onChange }) => {
         )}
       </div>
 
-      <AutoComplete
+      <PokemonAutoComplete
         key={config.id || 'empty'}
         initialValue={selectedPokemon?.koreanName || ''}
         options={pokemonOptions}

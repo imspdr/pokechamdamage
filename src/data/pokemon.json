@@ -317,12 +317,12 @@
     }
   },
   {
-    "id": "meowstic",
+    "id": "meowstic-mega",
     "pokedexNumber": 678,
     "name": "Meowstic",
-    "koreanName": "냐오닉스",
+    "koreanName": "냐오닉스-메가",
     "_baseKoreanName": "냐오닉스",
-    "form": "",
+    "form": "Mega",
     "types": [
       "Psychic"
     ],
@@ -3364,25 +3364,6 @@
     }
   },
   {
-    "id": "meowstic-female",
-    "pokedexNumber": 678,
-    "name": "Meowstic",
-    "koreanName": "냐오닉스-암컷",
-    "_baseKoreanName": "냐오닉스",
-    "form": "Female",
-    "types": [
-      "Psychic"
-    ],
-    "baseStats": {
-      "hp": 74,
-      "attack": 48,
-      "defense": 76,
-      "spAttack": 83,
-      "spDefense": 81,
-      "speed": 104
-    }
-  },
-  {
     "id": "ninetales",
     "pokedexNumber": 38,
     "name": "Ninetales",
@@ -4523,25 +4504,6 @@
       "spAttack": 65,
       "spDefense": 65,
       "speed": 103
-    }
-  },
-  {
-    "id": "maushold-f",
-    "pokedexNumber": 925,
-    "name": "Maushold",
-    "koreanName": "파밀리쥐-F",
-    "_baseKoreanName": "파밀리쥐",
-    "form": "F",
-    "types": [
-      "Normal"
-    ],
-    "baseStats": {
-      "hp": 74,
-      "attack": 75,
-      "defense": 70,
-      "spAttack": 65,
-      "spDefense": 75,
-      "speed": 111
     }
   },
   {
