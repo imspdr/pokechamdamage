@@ -1,6 +1,6 @@
 {
   "name": "pokechamdamage",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "포켓몬스터 챔피언스 데미지 계산기",
   "scripts": {
     "dev": "webpack serve --mode development",
