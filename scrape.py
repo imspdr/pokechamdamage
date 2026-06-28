@@ -1,6 +1,7 @@
 import urllib.request
 import json
 import os
+from bs4 import BeautifulSoup
 
 FORM_TRANSLATION = {
     "Gmax": "거다이맥스",
@@ -11,6 +12,9 @@ FORM_TRANSLATION = {
     "Galar": "가라르",
     "Hisui": "히스이",
     "Paldea": "팔데아",
+    "Paldea-Combat-Breed": "팔데아-컴뱃종",
+    "Paldea-Blaze-Breed": "팔데아-블레이즈종",
+    "Paldea-Aqua-Breed": "팔데아-워터종",
     "Primal": "원시",
     "Origin": "오리진",
     "Therian": "영물",
@@ -72,302 +76,210 @@ FORM_TRANSLATION = {
     "Snowy": "설운",
     "Busted": "들킨",
     "Disguised": "탈",
-    "Original-Cap": "오리지널캡",
-    "Hoenn-Cap": "호연캡",
-    "Sinnoh-Cap": "신오캡",
-    "Unova-Cap": "하나캡",
-    "Kalos-Cap": "칼로스캡",
-    "Alola-Cap": "알로라캡",
-    "Partner-Cap": "너로정했다캡",
-    "World-Cap": "월드캡",
-    "Cosplay": "옷갈아입기",
-    "Rock-Star": "하드록",
-    "Belle": "마담",
-    "Pop-Star": "아이돌",
-    "Phd": "닥터",
-    "Libre": "마스크드",
-    "Combat-Breed": "컴뱃종",
-    "Blaze-Breed": "블레이즈종",
-    "Aqua-Breed": "워터종",
     "Average": "보통사이즈",
     "Small": "작은사이즈",
     "Large": "큰사이즈",
     "Super": "특대사이즈",
-    "Red-Striped": "적색근",
-    "Blue-Striped": "청색근",
-    "White-Striped": "백색근",
-    "Battle-Bond": "유대변화",
-    "Overcast": "네거티브",
-    "West": "서쪽바다",
-    "East": "동쪽바다",
-    "Baile": "이글이글",
-    "Pom-Pom": "파칙파칙",
-    "Pau": "훌라훌라",
-    "Sensu": "하늘하늘",
-    "Red-Meteor": "유성",
-    "Orange-Meteor": "유성",
-    "Yellow-Meteor": "유성",
-    "Green-Meteor": "유성",
-    "Blue-Meteor": "유성",
-    "Indigo-Meteor": "유성",
-    "Violet-Meteor": "유성",
-    "Red": "빨강코어",
-    "Orange": "주황코어",
-    "Yellow": "노랑코어",
-    "Green": "초록코어",
-    "Blue": "파랑코어",
-    "Indigo": "남색코어",
-    "Violet": "보라코어",
-    "Phony": "가품",
-    "Antique": "진품",
-    "Green-Plumage": "초록깃털",
-    "Blue-Plumage": "파랑깃털",
-    "Yellow-Plumage": "노랑깃털",
-    "White-Plumage": "하얀깃털",
-    "Curly": "젖혀진",
-    "Droopy": "쳐진",
-    "Stretchy": "뻗은",
-    "Teal-Mask": "벽록가면",
-    "Wellspring-Mask": "우물가면",
-    "Hearthflame-Mask": "화덕가면",
-    "Cornerstone-Mask": "주춧돌가면",
-    "Terastal": "테라스탈",
-    "Stellar": "스텔라",
-    "Chest": "상자",
-    "Roaming": "도보",
-    "Two-Segment": "두마디",
-    "Three-Segment": "세마디",
-    "Family-Of-Four": "네식구",
-    "Family-Of-Three": "세식구",
-    "Ordinary": "평소",
-    "Resolute": "각오",
-    "Bloodmoon": "다투곰",
-    "Paldea-Combat-Breed": "팔데아-컴뱃종",
-    "Paldea-Blaze-Breed": "팔데아-블레이즈종",
-    "Paldea-Aqua-Breed": "팔데아-워터종",
-    "Starter": "파트너",
-    "Power-Construct": "스웜체인지",
-    "Confined": "굴레에빠진",
-    "Unbound": "굴레를벗어난",
-    "Own-Tempo": "마이페이스",
-    "School": "군집",
-    "Solo": "단독",
-    "Vanilla-Cream-Strawberry-Sweet": "밀키바닐라",
     "Female": "암컷",
     "Male": "수컷",
-    "Dada": "아빠",
-    "Apex-Build": "완전형태",
-    "Gliding-Build": "활공형태",
-    "Limited-Build": "제한형태",
-    "Sprinting-Build": "질주형태",
-    "Swimming-Build": "유영형태",
-    "Ultimate-Mode": "컴플리트모드",
-    "Aquatic-Mode": "플로트모드",
-    "Drive-Mode": "드라이브모드",
-    "Glide-Mode": "글라이드모드",
-    "Low-Power-Mode": "리미트모드",
-    "Counterfeit": "범작",
-    "Unremarkable": "범작",
-    "A": "A",
-    "Spring": "봄",
     "Eternal": "영원의꽃",
-    "Natural": "야생",
-    "Icy-Snow": "빙설",
-    "Meadow": "화원",
-    "10-Power-Construct": "10%-스웜체인지",
-    "50-Power-Construct": "50%-스웜체인지",
 }
 
-def translate_form(form):
-    if not form:
-        return ""
-    if form in FORM_TRANSLATION:
-        return FORM_TRANSLATION[form]
+def get_form_string(name, f):
+    if not f: return ""
     
-    parts = form.split("-")
-    translated_parts = [FORM_TRANSLATION.get(p, p) for p in parts]
-    return "-".join(translated_parts)
+    if name == "Rotom":
+        if f == "h": return "Heat"
+        if f == "f": return "Wash" 
+        if f == "s": return "Fan"
+        if f == "m": return "Mow"
+    if name == "Gourgeist":
+        if f == "s": return "Small"
+        if f == "l": return "Large"
+        if f == "h": return "Super"
+    if name == "Tauros":
+        if f == "p": return "Paldea-Combat-Breed"
+        if f == "b": return "Paldea-Blaze-Breed"
+        if f == "a": return "Paldea-Aqua-Breed"
+    if name == "Meowstic":
+        if f == "f": return "Female"
+        if f == "m": return "" 
+    if name == "Lycanroc":
+        if f == "m": return "Midnight"
+        if f == "d": return "Dusk"
+        return "Midday"
+        
+    if f == "m": return "Mega"
+    if f == "mx": return "Mega X"
+    if f == "my": return "Mega Y"
+    if f == "a": return "Alola"
+    if f == "g": return "Gmax"
+    if f == "b": return "Blade"
+    if f == "d": return "Defense" 
+    if f == "h": return "Hisui"
+    if f == "e": return "Eternal"
+    return f.title()
 
-def fetch_pokemon_data():
-    url = "https://beta.pokeapi.co/graphql/v1beta"
+def get_korean_base_names(old_data):
+    name_map = {}
     
-    query = """
-    query {
-      pokemon_v2_pokemon(limit: 2000) {
-        id
-        name
-        pokemon_v2_pokemontypes {
-          pokemon_v2_type {
-            name
-          }
-        }
-        pokemon_v2_pokemonstats {
-          base_stat
-          pokemon_v2_stat {
-            name
-          }
-        }
-        pokemon_v2_pokemonforms {
-          form_name
-          name
-          is_mega
-        }
-        pokemon_v2_pokemonspecy {
-          id
-          pokemon_v2_pokemonspeciesnames(where: {language_id: {_eq: 3}}) {
-            name
-          }
-        }
-      }
+    name_map["mr. mime"] = "마임맨"
+    name_map["mr. rime"] = "마임꽁꽁"
+    name_map["mime jr."] = "흉내내"
+    name_map["type: null"] = "타입:널"
+    name_map["farfetch'd"] = "파오리" 
+    name_map["sirfetch'd"] = "창파나이트"
+    name_map["flabébé"] = "플라베베"
+
+    for p in old_data:
+        eng_name = p['name'].split('-')[0].lower() 
+        base_ko = p.get('_baseKoreanName') or p['koreanName'].split('-')[0]
+        name_map[eng_name] = base_ko
+        name_map[p['name'].lower()] = base_ko
+        
+    manual = {
+        "kommo-o": "짜랑고우거",
+        "hakamo-o": "짜랑고우",
+        "jangmo-o": "짜랑꼬",
+        "ho-oh": "칠색조",
+        "porygon-z": "폴리곤Z",
+        "ting-lu": "딩루",
+        "chien-pao": "파오젠",
+        "wo-chien": "총지엔",
+        "chi-yu": "위유이",
+        "tapu koko": "카푸꼬꼬꼭",
+        "tapu lele": "카푸나비나",
+        "tapu bulu": "카푸브루루",
+        "tapu fini": "카푸느지느",
+        "basculegion": "대쓰여너",
+        "maushold": "파밀리쥐",
+        "mimikyu": "따라큐",
+        "morpeko": "모르페코",
+        "aegislash": "킬가르도",
+        "palafin": "돌핀맨",
+        "meowstic": "냐오닉스",
+        "lycanroc": "루가루암",
+        "gourgeist": "펌킨인",
+        "flabebe": "플라베베"
     }
-    """
-    
-    req = urllib.request.Request(
-        url, 
-        data=json.dumps({'query': query}).encode('utf-8'),
-        headers={'Content-Type': 'application/json', 'User-Agent': 'Mozilla/5.0'}
-    )
-    
-    try:
-        with urllib.request.urlopen(req) as response:
-            result = json.loads(response.read().decode('utf-8'))
-            return result['data']['pokemon_v2_pokemon']
-    except Exception as e:
-        print(f"Error fetching data from PokeAPI: {e}")
-        return []
+    for k, v in manual.items():
+        name_map[k.lower()] = v
+        
+    return name_map
 
-def process_data(raw_data):
-    processed = []
-    
-    for p in raw_data:
-        # Pokedex number is species id
-        species = p.get('pokemon_v2_pokemonspecy')
-        if not species:
-            continue
-            
-        pokedex_num = species['id']
-        
-        # Base Korean name
-        kr_names = species.get('pokemon_v2_pokemonspeciesnames', [])
-        base_korean_name = kr_names[0]['name'] if kr_names else p['name']
+def scrape_serebii():
+    url = "https://serebii.net/pokedex-champions/stat/sp-attack.shtml"
+    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    print(f"Fetching data from {url} ...")
+    with urllib.request.urlopen(req) as response:
+        html = response.read().decode('iso-8859-1')
 
-        
-        # Types
-        types = [t['pokemon_v2_type']['name'] for t in p.get('pokemon_v2_pokemontypes', [])]
-        
-        # Stats
-        stats_raw = p.get('pokemon_v2_pokemonstats', [])
-        stats = {}
-        for s in stats_raw:
-            stat_name = s['pokemon_v2_stat']['name']
-            if stat_name == 'special-attack': stat_name = 'spAttack'
-            elif stat_name == 'special-defense': stat_name = 'spDefense'
-            stats[stat_name] = s['base_stat']
-            
-        # Forms & Mega
-        forms_raw = p.get('pokemon_v2_pokemonforms', [])
-        form_str = ""
-        if forms_raw:
-            f = forms_raw[0]
-            if f['is_mega']:
-                if f['form_name'].lower().startswith('mega'):
-                    form_str = f['form_name'].title()
-                    if '-' in form_str: # e.g. Mega-X -> Mega X
-                        form_str = form_str.replace('-', ' ')
-                else:
-                    form_str = "Mega"
-                    if f['form_name']:
-                        form_str += f" {f['form_name'].title()}"
-            elif f['form_name']:
-                form_str = f['form_name'].title()
-        
-        # Set primary key based on name and form
-        pk = p['name']
-        
-        # Map to official Korean form name
-        form_ko = translate_form(form_str)
-        korean_name = f"{base_korean_name}-{form_ko}" if form_ko else base_korean_name
-        
-        data = {
-            "id": pk,
-            "pokedexNumber": pokedex_num,
-            "name": p['name'],
-            "koreanName": korean_name,
-            "_baseKoreanName": base_korean_name,
-            "form": form_str,
-            "types": types,
-            "baseStats": {
-                "hp": stats.get('hp', 0),
-                "attack": stats.get('attack', 0),
-                "defense": stats.get('defense', 0),
-                "spAttack": stats.get('spAttack', 0),
-                "spDefense": stats.get('spDefense', 0),
-                "speed": stats.get('speed', 0),
-            }
-        }
-        processed.append(data)
-        
-    # Sort by Pokedex Number, then by ID (to keep base form before megas/alt forms)
-    processed.sort(key=lambda x: (x['pokedexNumber'], x['form'] != '', x['id']))
-    return processed
+    soup = BeautifulSoup(html, 'html.parser')
+    tables = soup.find_all('table', {'class': 'dextable'})
+    data = []
 
-def deduplicate_forms(data):
-    from collections import defaultdict
-    grouped = defaultdict(list)
-    
-    for p in data:
-        pokedex_num = p['pokedexNumber']
-        types_tuple = tuple(sorted(p['types']))
-        stats_tuple = (
-            p['baseStats']['hp'],
-            p['baseStats']['attack'],
-            p['baseStats']['defense'],
-            p['baseStats']['spAttack'],
-            p['baseStats']['spDefense'],
-            p['baseStats']['speed'],
-        )
-        signature = (types_tuple, stats_tuple)
-        
-        # Keep if signature is unique for this pokedex_num
-        if not any(sig == signature for sig, _ in grouped[pokedex_num]):
-            grouped[pokedex_num].append((signature, p))
-            
-    deduped = []
-    for pokedex_num, kept_forms in grouped.items():
-        if len(kept_forms) == 1:
-            # Only one form kept. Force base name and empty form.
-            form_obj = kept_forms[0][1]
-            if '_baseKoreanName' in form_obj:
-                form_obj['koreanName'] = form_obj['_baseKoreanName']
-                del form_obj['_baseKoreanName']
-            form_obj['form'] = ""
-            deduped.append(form_obj)
-        else:
-            for sig, form_obj in kept_forms:
-                if '_baseKoreanName' in form_obj:
-                    del form_obj['_baseKoreanName']
-                deduped.append(form_obj)
+    if tables:
+        for tr in tables[0].find_all('tr')[1:]:
+            tds = tr.find_all('td', recursive=False)
+            if len(tds) > 10:
+                try:
+                    dex_no = int(tds[0].text.strip().replace('#', ''))
+                except ValueError:
+                    continue
+                name = tds[2].text.strip()
                 
-    deduped.sort(key=lambda x: (x['pokedexNumber'], x['form'] != '', x['id']))
-    return deduped
+                type_td = tds[3] if len(tds)>3 else None
+                types = []
+                if type_td:
+                    for img in type_td.find_all('img'):
+                        if 'type' in img.get('src', ''):
+                            t = img['src'].split('/')[-1].split('.')[0].title()
+                            types.append(t)
+                
+                try:
+                    hp = int(tds[5].text.strip())
+                    atk = int(tds[6].text.strip())
+                    df = int(tds[7].text.strip())
+                    spa = int(tds[8].text.strip())
+                    spd = int(tds[9].text.strip())
+                    spe = int(tds[10].text.strip())
+                except Exception as e:
+                    continue
+
+                img_tag = tr.find('img', src=lambda s: s and '/icon/' in s)
+                form_code = ""
+                if img_tag:
+                    icon_src = img_tag['src']
+                    parts = icon_src.split('/')[-1].split('.')[0].split('-')
+                    if len(parts) > 1:
+                        form_code = parts[1]
+                
+                data.append({
+                    "dex_no": dex_no,
+                    "name": name,
+                    "form_code": form_code,
+                    "types": types,
+                    "stats": {
+                        "hp": hp,
+                        "attack": atk,
+                        "defense": df,
+                        "spAttack": spa,
+                        "spDefense": spd,
+                        "speed": spe
+                    }
+                })
+    return data
+
+def main():
+    old_data = []
+    if os.path.exists("src/data/pokemon.json"):
+        with open("src/data/pokemon.json", "r", encoding="utf-8") as f:
+            old_data = json.load(f)
+            
+    base_korean_names = get_korean_base_names(old_data)
+    
+    serebii_data = scrape_serebii()
+    processed_data = []
+    
+    for p in serebii_data:
+        eng_name = p['name']
+        form_code = p['form_code']
+        form_str = get_form_string(eng_name, form_code)
+        
+        lower_name = eng_name.lower()
+        base_ko = base_korean_names.get(lower_name)
+        if not base_ko:
+            clean_name = lower_name.replace("'", "").replace(".", "")
+            base_ko = base_korean_names.get(clean_name, eng_name) 
+            
+        form_ko = FORM_TRANSLATION.get(form_str, form_str) if form_str else ""
+        korean_name = f"{base_ko}-{form_ko}" if form_ko else base_ko
+        
+        if form_str:
+            pk = f"{lower_name}-{form_str.lower().replace(' ', '-')}"
+        else:
+            pk = lower_name
+            
+        pk = pk.replace("'", "").replace(".", "")
+            
+        new_entry = {
+            "id": pk,
+            "pokedexNumber": p['dex_no'],
+            "name": eng_name,
+            "koreanName": korean_name,
+            "_baseKoreanName": base_ko,
+            "form": form_str,
+            "types": p['types'],
+            "baseStats": p['stats']
+        }
+        processed_data.append(new_entry)
+        
+    print(f"Processed {len(processed_data)} entries.")
+    
+    os.makedirs("src/data", exist_ok=True)
+    with open("src/data/pokemon.json", "w", encoding="utf-8") as f:
+        json.dump(processed_data, f, indent=2, ensure_ascii=False)
+    print("Saved to src/data/pokemon.json")
 
 if __name__ == "__main__":
-    print("Fetching data from PokeAPI...")
-    raw_data = fetch_pokemon_data()
-    print(f"Fetched {len(raw_data)} pokemon entries.")
-    
-    if raw_data:
-        processed_data = process_data(raw_data)
-        processed_data = deduplicate_forms(processed_data)
-        
-        print(f"Processed {len(processed_data)} entries.")
-        
-        # Print first 2 to verify
-        print("Sample data:")
-        print(json.dumps(processed_data[:2], indent=2, ensure_ascii=False))
-        
-        # Save to file
-        os.makedirs("src/data", exist_ok=True)
-        with open("src/data/pokemon.json", "w", encoding="utf-8") as f:
-            json.dump(processed_data, f, indent=2, ensure_ascii=False)
-        print("Saved to src/data/pokemon.json")
+    main()
