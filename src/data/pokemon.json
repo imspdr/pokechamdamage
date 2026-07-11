@@ -1598,7 +1598,7 @@
     "id": "slowking-gmax",
     "pokedexNumber": 199,
     "name": "Slowking",
-    "koreanName": "야도킹-거다이맥스",
+    "koreanName": "야도킹-가라르",
     "_baseKoreanName": "야도킹",
     "form": "Gmax",
     "types": [
@@ -2427,7 +2427,7 @@
     "id": "slowbro-gmax",
     "pokedexNumber": 80,
     "name": "Slowbro",
-    "koreanName": "야도란-거다이맥스",
+    "koreanName": "야도란-가라르",
     "_baseKoreanName": "야도란",
     "form": "Gmax",
     "types": [
@@ -4197,7 +4197,7 @@
     "id": "stunfisk-gmax",
     "pokedexNumber": 618,
     "name": "Stunfisk",
-    "koreanName": "메더-거다이맥스",
+    "koreanName": "메더-가라르",
     "_baseKoreanName": "메더",
     "form": "Gmax",
     "types": [

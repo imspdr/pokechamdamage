@@ -170,7 +170,7 @@ export function calculateDetailedDamage(
 
   const baseDamage = Math.floor(Math.floor((levelPart * move.power * A) / D) / 50) + 2;
 
-  const stab = attacker.types.includes(move.type) ? 1.5 : 1.0;
+  const stab = attacker.types.some(t => t.toLowerCase() === move.type.toLowerCase()) ? 1.5 : 1.0;
   const typeEffectiveness = getTypeMultiplier(move.type, defender.types);
 
   let extraMod = 1;
@@ -183,7 +183,10 @@ export function calculateDetailedDamage(
   const hp = defender.stats.hp;
 
   for (let r = 85; r <= 100; r++) {
-    const damage = Math.floor(baseDamage * (r / 100) * stab * typeEffectiveness * extraMod);
+    let damage = Math.floor((baseDamage * r) / 100);
+    damage = Math.floor(damage * stab);
+    damage = Math.floor(damage * typeEffectiveness);
+    damage = Math.floor(damage * extraMod);
     rolls.push(damage);
     percentages.push((damage / hp) * 100);
   }
